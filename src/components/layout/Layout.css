@@ -1,0 +1,133 @@
+.layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-bg-primary);
+}
+
+.layout-header {
+    background-color: var(--color-white);
+    border-bottom: 1px solid var(--color-gray-200);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-lg) var(--spacing-xl);
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.header-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--color-primary);
+}
+
+.header-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-tight);
+}
+
+.header-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    margin-top: var(--spacing-xs);
+}
+
+.layout-container {
+    display: flex;
+    flex: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-xl);
+}
+
+.layout-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+}
+
+.sidebar-nav {
+    position: sticky;
+    top: calc(5rem + var(--spacing-xl));
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    font-weight: var(--font-weight-medium);
+    transition: all var(--transition-base);
+}
+
+.nav-item:hover {
+    background-color: var(--color-gray-100);
+    color: var(--color-text-primary);
+}
+
+.nav-item.active {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.nav-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+}
+
+.layout-main {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .layout-container {
+        flex-direction: column;
+        padding: var(--spacing-md);
+    }
+
+    .layout-sidebar {
+        width: 100%;
+    }
+
+    .sidebar-nav {
+        position: static;
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: var(--spacing-sm);
+    }
+
+    .nav-item {
+        white-space: nowrap;
+    }
+
+    .header-content {
+        padding: var(--spacing-md);
+    }
+
+    .header-title {
+        font-size: var(--font-size-xl);
+    }
+}

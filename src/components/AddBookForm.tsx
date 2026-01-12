@@ -1,92 +1,95 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@apollo/client';
 import { ADD_BOOK, LIST_BOOKS } from '../graphql/queries';
-import { addBookSchema } from '../validations/library.validation';
+import { addBookSchema, type AddBookInput } from '../validations/library.validation';
 import type { Book } from '../types/library.types';
-import { ZodError } from 'zod';
+import { Input } from './ui/Input';
+import { Button } from './ui/Button';
+import { Card } from './ui/Card';
 
 interface AddBookFormProps {
     onSuccess?: () => void;
 }
 
 export function AddBookForm({ onSuccess }: AddBookFormProps) {
-    const [title, setTitle] = useState('');
-    const [author, setAuthor] = useState('');
-    const [errors, setErrors] = useState<Record<string, string>>({});
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting }
+    } = useForm<AddBookInput>({
+        resolver: zodResolver(addBookSchema),
+        mode: 'onBlur'
+    });
 
     const [addBook, { loading, error: mutationError }] = useMutation<
         { addBook: Book },
-        { title: string; author: string }
+        AddBookInput
     >(ADD_BOOK, {
         refetchQueries: [{ query: LIST_BOOKS }],
         onCompleted: () => {
-            setTitle('');
-            setAuthor('');
-            setErrors({});
+            reset();
             onSuccess?.();
         },
     });
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setErrors({});
-
+    const onSubmit = async (data: AddBookInput) => {
         try {
-            const validated = addBookSchema.parse({ title, author });
-            await addBook({ variables: validated });
+            await addBook({ variables: data });
         } catch (error) {
-            if (error instanceof ZodError) {
-                const fieldErrors: Record<string, string> = {};
-                error.issues.forEach((err) => {
-                    if (err.path[0]) {
-                        fieldErrors[err.path[0].toString()] = err.message;
-                    }
-                });
-                setErrors(fieldErrors);
-            }
+            // Error is handled by Apollo mutation error
+            console.error('Error adding book:', error);
         }
     };
 
     return (
-        <div className="form-container">
-            <h2>Add New Book</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="title">Title</label>
-                    <input
-                        id="title"
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className={errors.title ? 'error' : ''}
-                        placeholder="Enter book title"
-                    />
-                    {errors.title && <span className="error-message">{errors.title}</span>}
-                </div>
+        <Card>
+            <h2 style={{
+                fontSize: 'var(--font-size-xl)',
+                fontWeight: 'var(--font-weight-semibold)',
+                color: 'var(--color-text-primary)',
+                marginBottom: 'var(--spacing-lg)'
+            }}>
+                Add New Book
+            </h2>
+            <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
+                <Input
+                    label="Book Title"
+                    placeholder="Enter book title"
+                    error={errors.title?.message}
+                    {...register('title')}
+                />
 
-                <div className="form-group">
-                    <label htmlFor="author">Author</label>
-                    <input
-                        id="author"
-                        type="text"
-                        value={author}
-                        onChange={(e) => setAuthor(e.target.value)}
-                        className={errors.author ? 'error' : ''}
-                        placeholder="Enter author name"
-                    />
-                    {errors.author && <span className="error-message">{errors.author}</span>}
-                </div>
+                <Input
+                    label="Author Name"
+                    placeholder="Enter author name"
+                    error={errors.author?.message}
+                    {...register('author')}
+                />
 
                 {mutationError && (
-                    <div className="error-message">
+                    <div style={{
+                        padding: 'var(--spacing-md)',
+                        backgroundColor: '#fee2e2',
+                        color: 'var(--color-danger)',
+                        borderRadius: 'var(--radius-md)',
+                        fontSize: 'var(--font-size-sm)'
+                    }}>
                         {mutationError.message}
                     </div>
                 )}
 
-                <button type="submit" disabled={loading}>
-                    {loading ? 'Adding...' : 'Add Book'}
-                </button>
+                <Button
+                    type="submit"
+                    variant="primary"
+                    fullWidth
+                    isLoading={loading || isSubmitting}
+                >
+                    Add Book
+                </Button>
             </form>
-        </div>
+        </Card>
     );
 }
+

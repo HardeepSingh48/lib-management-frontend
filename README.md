@@ -1,14 +1,16 @@
 # Mini Library Management System - Frontend
 
-A modern, production-ready React frontend for the Mini Library Management System with full type safety and real-time updates.
+A modern, production-ready React frontend for the Mini Library Management System with full type safety, professional UI components, and an elegant design.
 
 ## 🚀 Tech Stack
 
-- **Framework**: React 18 + Vite
+- **Framework**: React 19 + Vite
 - **Language**: TypeScript (strict mode, 100% type-safe)
 - **GraphQL Client**: Apollo Client 3
+- **Form Management**: React Hook Form with Zod validation
 - **Validation**: Zod schemas
-- **Styling**: Modern CSS with gradients and animations
+- **Styling**: Modern CSS with custom properties and Inter font
+- **UI Components**: Custom component library (Button, Input, Select, Card)
 
 ## 📁 Project Structure
 
@@ -16,20 +18,35 @@ A modern, production-ready React frontend for the Mini Library Management System
 client/
 ├── src/
 │   ├── components/
-│   │   ├── AddBookForm.tsx       # Add book form with validation
-│   │   ├── AddMemberForm.tsx     # Add member form with validation
-│   │   └── BookList.tsx          # Book list with borrow/return
+│   │   ├── ui/                     # Reusable UI components
+│   │   │   ├── Button.tsx          # Button component with variants
+│   │   │   ├── Button.css
+│   │   │   ├── Input.tsx           # Input component with validation
+│   │   │   ├── Input.css
+│   │   │   ├── Select.tsx          # Select dropdown component
+│   │   │   ├── Select.css
+│   │   │   ├── Card.tsx            # Card container component
+│   │   │   ├── Card.css
+│   │   │   └── index.ts            # UI components barrel export
+│   │   ├── layout/                 # Layout components
+│   │   │   ├── Layout.tsx          # Main layout with sidebar
+│   │   │   └── Layout.css
+│   │   ├── AddBookForm.tsx         # Add book form with react-hook-form
+│   │   ├── AddMemberForm.tsx       # Add member form with react-hook-form
+│   │   ├── BookList.tsx            # Book list with borrow/return
+│   │   └── BookList.css
 │   ├── graphql/
-│   │   └── queries.ts            # GraphQL queries and mutations
+│   │   └── queries.ts              # GraphQL queries and mutations
 │   ├── types/
-│   │   └── library.types.ts      # TypeScript type definitions
+│   │   ├── library.types.ts        # Library domain types
+│   │   └── ui.types.ts             # UI component types
 │   ├── validations/
-│   │   └── library.validation.ts # Zod validation schemas
-│   ├── apollo-client.ts          # Apollo Client configuration
-│   ├── App.tsx                   # Main application component
-│   ├── App.css                   # Application styles
-│   ├── main.tsx                  # React entry point
-│   └── index.css                 # Global styles
+│   │   └── library.validation.ts   # Zod validation schemas
+│   ├── apollo-client.ts            # Apollo Client configuration
+│   ├── App.tsx                     # Main application component
+│   ├── App.css                     # Application styles
+│   ├── main.tsx                    # React entry point
+│   └── index.css                   # Global styles & design system
 ├── package.json
 └── tsconfig.json
 ```
@@ -57,50 +74,99 @@ The application will be available at `http://localhost:5173`
 ## ✨ Features
 
 ### 📚 Book Management
-- **View all books** with availability status
-- **Add new books** with title and author
+- **View all books** with modern card-based layout
+- **Add new books** using react-hook-form with Zod validation
 - **Real-time updates** after mutations
-- **Visual indicators** for available/borrowed status
+- **Visual status indicators** for available/borrowed books
 
 ### 👥 Member Management
-- **Add new members** to the library
+- **Add new members** with validated forms
 - **Select members** for borrow/return operations
-- **Dropdown selection** for easy member choice
+- **Dropdown selection** with custom Select component
 
 ### 🔄 Borrow/Return System
 - **Borrow books** (only if available)
 - **Return books** (only if borrowed)
 - **Member selection** required for operations
 - **Validation** prevents invalid operations
+- **Loading states** during operations
 
 ### 🎨 UI/UX Features
-- **Modern gradient design** with glassmorphism
-- **Responsive layout** for all screen sizes
-- **Loading states** for async operations
+- **Professional layout** with sidebar navigation
+- **Custom UI component library** for consistency
+- **Modern design system** with CSS custom properties
+- **Inter font** for professional typography
+- **Unique color palette** (not AI-generated looking)
+- **Responsive design** for all screen sizes
+- **Loading states** with spinners
 - **Error messages** with clear feedback
-- **Form validation** with Zod
-- **Hover effects** and animations
+- **Form validation** with react-hook-form + Zod
+- **Hover effects** and smooth transitions
+- **Accessibility features** (ARIA labels, keyboard navigation)
 
 ## 🔍 Component Overview
 
-### AddBookForm
-- Form to add new books
-- Zod validation for title and author
-- Real-time error display
-- Refetches book list on success
+### UI Components
 
-### AddMemberForm
-- Form to add new members
-- Zod validation for name
-- Real-time error display
-- Refetches member list on success
+#### Button
+Reusable button component with:
+- Variants: primary, secondary, success, danger
+- Sizes: small, medium, large
+- Loading state support
+- Full width option
+- Full type safety
 
-### BookList
-- Displays all books in a grid
-- Shows availability status
-- Member selector for borrow/return
-- Handles borrow/return mutations
-- Real-time updates
+#### Input
+Reusable input component with:
+- Label support
+- Error message display
+- Helper text
+- React Hook Form integration
+- Accessibility features
+
+#### Select
+Reusable select dropdown with:
+- Label support
+- Error handling
+- Custom styling
+- Options array support
+
+#### Card
+Reusable card container with:
+- Variants: default, outlined, elevated
+- Consistent styling
+- Hover effects
+
+### Layout Components
+
+#### Layout
+Main layout component with:
+- Header with branding
+- Sidebar navigation
+- Responsive design
+- Sticky header
+
+### Form Components
+
+#### AddBookForm
+- React Hook Form integration
+- Zod validation with zodResolver
+- Custom UI components
+- Real-time error feedback
+- Loading states
+
+#### AddMemberForm
+- React Hook Form integration
+- Zod validation with zodResolver
+- Custom UI components
+- Real-time error feedback
+
+#### BookList
+- Custom UI components
+- Member selection
+- Borrow/return operations
+- Loading and error states
+- Empty state handling
 
 ## ✅ Validation Rules
 
@@ -114,7 +180,7 @@ Client-side validation matches backend:
 ## 🚨 Error Handling
 
 - **GraphQL errors** displayed in UI
-- **Validation errors** shown per field
+- **Validation errors** shown per field with react-hook-form
 - **Network errors** handled gracefully
 - **Loading states** prevent duplicate submissions
 
@@ -124,6 +190,7 @@ Client-side validation matches backend:
 - **Strict TypeScript** configuration
 - **Type-safe GraphQL** operations
 - **Zod schema inference** for forms
+- **Typed UI components** with proper interfaces
 
 ## 📝 Available Scripts
 
@@ -132,24 +199,27 @@ Client-side validation matches backend:
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
-## 🎨 Design Features
+## 🎨 Design System
 
-### Color Scheme
-- **Primary Gradient**: Purple to violet (`#667eea` → `#764ba2`)
-- **Available Books**: Green border and badge
-- **Borrowed Books**: Orange border and badge
-- **Buttons**: Gradient backgrounds with hover effects
+### Color Palette
+- **Primary**: Blue (#2563eb)
+- **Secondary**: Cyan (#0891b2)
+- **Success**: Green (#059669)
+- **Danger**: Red (#dc2626)
+- **Warning**: Orange (#d97706)
 
-### Responsive Design
-- **Desktop**: Two-column layout (forms | books)
-- **Tablet**: Single column with optimized spacing
-- **Mobile**: Full-width cards and forms
+### Typography
+- **Font Family**: Inter (Google Fonts)
+- **Font Weights**: 300, 400, 500, 600, 700
+- **Sizes**: xs, sm, base, lg, xl, 2xl, 3xl, 4xl
 
-### Animations
-- **Hover effects** on cards and buttons
-- **Transform animations** on interactions
-- **Smooth transitions** throughout
-- **Loading spinners** for async operations
+### Spacing
+- CSS custom properties for consistent spacing
+- Scale: xs, sm, md, lg, xl, 2xl, 3xl
+
+### Shadows
+- Elevation system with sm, md, lg, xl shadows
+- Consistent depth hierarchy
 
 ## 🔗 GraphQL Operations
 
@@ -180,16 +250,20 @@ Client-side validation matches backend:
 
 ## 🏗️ Architecture Highlights
 
+- **React Hook Form** for declarative form management
+- **Zod** for runtime type validation
 - **Apollo Client** with network-only fetch policy
 - **Component composition** for reusability
-- **Centralized validation** with Zod
+- **Centralized validation** with Zod schemas
 - **Type-safe GraphQL** operations
-- **Error boundaries** for graceful failures
-- **Optimistic UI updates** via refetchQueries
+- **Custom UI component library** for consistency
+- **CSS custom properties** for theming
+- **Responsive layout** with CSS Grid and Flexbox
 
 ## 🎯 Production Ready
 
 - ✅ Full type safety (no `any`)
+- ✅ React Hook Form integration
 - ✅ Input validation on all forms
 - ✅ Error handling throughout
 - ✅ Loading states for UX
@@ -197,16 +271,20 @@ Client-side validation matches backend:
 - ✅ Modern, professional UI
 - ✅ Real-time data updates
 - ✅ Accessibility considerations
+- ✅ Custom component library
+- ✅ Professional layout system
 
 ## 📦 Dependencies
 
 ```json
 {
-  "@apollo/client": "^3.x",
-  "graphql": "^16.x",
-  "react": "^18.x",
-  "react-dom": "^18.x",
-  "zod": "^3.x"
+  "@apollo/client": "^3.11.11",
+  "@hookform/resolvers": "^3.x",
+  "graphql": "^16.12.0",
+  "react": "^19.2.0",
+  "react-dom": "^19.2.0",
+  "react-hook-form": "^7.x",
+  "zod": "^4.3.5"
 }
 ```
 
@@ -231,4 +309,15 @@ The `dist` folder will contain the optimized production build.
 - **Strict mode** enabled
 - **No implicit any**
 - **Strict null checks**
-- **ES2020 target**
+- **ES2022 target**
+
+## 🎨 Design Philosophy
+
+This application follows modern web design principles:
+- **Professional aesthetics** - Not AI-generated looking
+- **Consistent design system** - CSS custom properties
+- **Reusable components** - DRY principle
+- **Type safety first** - TypeScript everywhere
+- **User experience** - Loading states, error handling, validation
+- **Accessibility** - ARIA labels, semantic HTML
+- **Performance** - Optimized builds, code splitting ready

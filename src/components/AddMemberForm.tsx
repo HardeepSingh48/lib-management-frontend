@@ -1,77 +1,87 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@apollo/client';
 import { ADD_MEMBER, LIST_MEMBERS } from '../graphql/queries';
-import { addMemberSchema } from '../validations/library.validation';
+import { addMemberSchema, type AddMemberInput } from '../validations/library.validation';
 import type { Member } from '../types/library.types';
-import { ZodError } from 'zod';
+import { Input } from './ui/Input';
+import { Button } from './ui/Button';
+import { Card } from './ui/Card';
 
 interface AddMemberFormProps {
     onSuccess?: () => void;
 }
 
 export function AddMemberForm({ onSuccess }: AddMemberFormProps) {
-    const [name, setName] = useState('');
-    const [errors, setErrors] = useState<Record<string, string>>({});
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting }
+    } = useForm<AddMemberInput>({
+        resolver: zodResolver(addMemberSchema),
+        mode: 'onBlur'
+    });
 
     const [addMember, { loading, error: mutationError }] = useMutation<
         { addMember: Member },
-        { name: string }
+        AddMemberInput
     >(ADD_MEMBER, {
         refetchQueries: [{ query: LIST_MEMBERS }],
         onCompleted: () => {
-            setName('');
-            setErrors({});
+            reset();
             onSuccess?.();
         },
     });
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setErrors({});
-
+    const onSubmit = async (data: AddMemberInput) => {
         try {
-            const validated = addMemberSchema.parse({ name });
-            await addMember({ variables: validated });
+            await addMember({ variables: data });
         } catch (error) {
-            if (error instanceof ZodError) {
-                const fieldErrors: Record<string, string> = {};
-                error.issues.forEach((err) => {
-                    if (err.path[0]) {
-                        fieldErrors[err.path[0].toString()] = err.message;
-                    }
-                });
-                setErrors(fieldErrors);
-            }
+            // Error is handled by Apollo mutation error
+            console.error('Error adding member:', error);
         }
     };
 
     return (
-        <div className="form-container">
-            <h2>Add New Member</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="name">Member Name</label>
-                    <input
-                        id="name"
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className={errors.name ? 'error' : ''}
-                        placeholder="Enter member name"
-                    />
-                    {errors.name && <span className="error-message">{errors.name}</span>}
-                </div>
+        <Card>
+            <h2 style={{
+                fontSize: 'var(--font-size-xl)',
+                fontWeight: 'var(--font-weight-semibold)',
+                color: 'var(--color-text-primary)',
+                marginBottom: 'var(--spacing-lg)'
+            }}>
+                Add New Member
+            </h2>
+            <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
+                <Input
+                    label="Member Name"
+                    placeholder="Enter member name"
+                    error={errors.name?.message}
+                    {...register('name')}
+                />
 
                 {mutationError && (
-                    <div className="error-message">
+                    <div style={{
+                        padding: 'var(--spacing-md)',
+                        backgroundColor: '#fee2e2',
+                        color: 'var(--color-danger)',
+                        borderRadius: 'var(--radius-md)',
+                        fontSize: 'var(--font-size-sm)'
+                    }}>
                         {mutationError.message}
                     </div>
                 )}
 
-                <button type="submit" disabled={loading}>
-                    {loading ? 'Adding...' : 'Add Member'}
-                </button>
+                <Button
+                    type="submit"
+                    variant="primary"
+                    fullWidth
+                    isLoading={loading || isSubmitting}
+                >
+                    Add Member
+                </Button>
             </form>
-        </div>
+        </Card>
     );
 }
